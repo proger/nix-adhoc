@@ -1,4 +1,8 @@
-## using nix services on non-NixOS systems
+## nix-adhoc
+
+Hacks to nix modules system-based services on non-NixOS systems.
+
+### Bootstrapping
 
 #### CentOS
 
@@ -18,3 +22,7 @@
 % ssh ubuntu -l ubuntu sudo chown root:root /root/.ssh/authorized_keys
 ```
 
+### Acknowledgements
+
+`systemd` -> `supervisord` stub and some ideas have been taken from [nix-rehash](https://github.com/kiberpipa/nix-rehash).
+Some code was taken from [Upcast](https://github.com/zalora/upcast) which in turn inherited it from [NixOps](https://github.com/nixos/nixops).
