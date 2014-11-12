@@ -1,6 +1,9 @@
 ## nix-adhoc
 
-Hacks to make nix module system-based services runnable on non-NixOS systems.
+Hacks to make nix module system-based services (and beyond) runnable on non-NixOS systems.
+
+* nixos module system-based stuff is in `nixos/`
+* totally standalone stuff is in `./` (start at `sproxy.nix`)
 
 ### Bootstrapping
 
@@ -14,12 +17,11 @@ Hacks to make nix module system-based services runnable on non-NixOS systems.
 ### Pushing the service to a system
 
 ```
-% upcast build-remote -t hydra.zalora.com -A misc.images-map target-service.nix
-% upcast install -t $(awk '/HostName/{print $2}' test/ssh_config) \
+$ upcast install -t $(awk '/HostName/{print $2}' test/ssh_config) \
     -f hydra \
-    -p /nix/var/nix/profiles/target-service \
-    /nix/store/mqlniv4kfr5py348whya212hmalam411-entrypoint
-% ssh -F test/ssh_config /nix/var/nix/profiles/target-service/bin/entrypoint-start-services -n
+    -p /nix/var/nix/profiles/sproxy-defnix \
+    $(upcast build-remote -t hydra.zalora.com -A sproxy sproxy.nix)
+% ssh -F test/ssh_config /nix/var/nix/profiles/sproxy-defnix/bin/supervisord
 ```
 
 ### Acknowledgements
