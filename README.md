@@ -1,6 +1,6 @@
 ## nix-adhoc
 
-Hacks to nix modules system-based services on non-NixOS systems.
+Hacks to make nix module system-based services runnable on non-NixOS systems.
 
 ### Bootstrapping
 
