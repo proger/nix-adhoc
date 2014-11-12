@@ -15,7 +15,10 @@ Hacks to make nix module system-based services runnable on non-NixOS systems.
 
 ```
 % upcast build-remote -t hydra.zalora.com -A misc.images-map target-service.nix
-% upcast install -t $(awk '/HostName/{print $2}' test/ssh_config) -f hydra -p /nix/var/nix/profiles/target-service /nix/store/mqlniv4kfr5py348whya212hmalam411-entrypoint
+% upcast install -t $(awk '/HostName/{print $2}' test/ssh_config) \
+    -f hydra \
+    -p /nix/var/nix/profiles/target-service \
+    /nix/store/mqlniv4kfr5py348whya212hmalam411-entrypoint
 % ssh -F test/ssh_config /nix/var/nix/profiles/target-service/bin/entrypoint-start-services -n
 ```
 
