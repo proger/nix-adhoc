@@ -1,0 +1,3 @@
+ec2-info.nix
+*.store
+*ssh_config

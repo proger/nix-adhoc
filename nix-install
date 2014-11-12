@@ -1,0 +1,53 @@
+#!/bin/sh
+
+# customized version of https://nixos.org/nix/install
+
+{ # Prevent execution if this script was only partially downloaded
+
+unpack=nix-binary-tarball-unpack
+
+require_util() {
+    type "$1" > /dev/null 2>&1 || which "$1" > /dev/null 2>&1 ||
+        oops "you do not have \`$1' installed, which i need to $2"
+}
+
+oops() {
+    echo "$0: $@" >&2
+    rm -rf "$unpack"
+    exit 1
+}
+
+system=x86_64-linux
+# https://hydra.nixos.org/job/nix/master/binaryTarball.x86_64-linux#tabs-status
+url="https://hydra.nixos.org/build/16795877/download/1/nix-1.8pre3886_087581a-x86_64-linux.tar.bz2"
+
+require_util curl "download the binary tarball"
+require_util bzcat "decompress the binary tarball"
+require_util tar "unpack the binary tarball"
+
+echo "unpacking Nix binary tarball for $system from \`$url'..."
+if [ ! -d $unpack ]; then
+    mkdir "$unpack" || oops "failed to create \`$unpack' directory"
+    curl -C - -O -L "$url" || oops "could not download \`$url'"
+    tar xjf $(basename "$url") -C "$unpack" || oops "failed to unpack \`$url'"
+fi
+
+[ -e "$unpack"/*/install ] ||
+    oops "installation script is missing from the binary tarball!"
+
+install -d /etc/nix
+cat > /etc/nix/nix.conf << EOF
+build-users-group =
+EOF
+
+install -m 755 -o root -d /nix
+"$unpack"/*/install
+if [ $? -eq 0 ]; then
+    rm -rf "$unpack"
+    echo 'export PATH=/nix/var/nix/profiles/default/bin:$PATH' > /etc/profile.d/nix-adhoc.sh
+    chmod +x /etc/profile.d/nix-adhoc.sh
+fi
+
+} # End of wrapping
+
+# vim: ts=4 sts=4 sw=4 et
