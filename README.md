@@ -11,16 +11,6 @@ Hacks to make nix module system-based services runnable on non-NixOS systems.
 % cat nix-install | ssh -F test/ssh_config centos bash -
 ```
 
-#### Ubuntu
-
-```console
-# unlock root:
-% ssh ubuntu -l ubuntu sudo passwd -u root
-% ssh ubuntu -l ubuntu sudo cp .ssh/authorized_keys /root/.ssh
-% ssh ubuntu -l ubuntu sudo chmod 600 /root/.ssh/authorized_keys
-% ssh ubuntu -l ubuntu sudo chown root:root /root/.ssh/authorized_keys
-```
-
 ### Pushing the service to a system
 
 ```
