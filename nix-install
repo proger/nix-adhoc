@@ -19,7 +19,7 @@ oops() {
 
 system=x86_64-linux
 # https://hydra.nixos.org/job/nix/master/binaryTarball.x86_64-linux#tabs-status
-url="https://hydra.nixos.org/build/16795877/download/1/nix-1.8pre3886_087581a-x86_64-linux.tar.bz2"
+url="http://hydra.nixos.org/build/17897595/download/1/nix-1.8-x86_64-linux.tar.bz2"
 
 require_util curl "download the binary tarball"
 require_util bzcat "decompress the binary tarball"
