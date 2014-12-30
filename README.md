@@ -16,12 +16,19 @@ Hacks to make nix module system-based services (and beyond) runnable on non-NixO
 
 ### Pushing the service to a system
 
-```
-$ upcast install -t $(awk '/HostName/{print $2}' test/ssh_config) \
+```console
+% upcast install -t $(awk '/HostName/{print $2}' test/ssh_config) \
     -f hydra \
     -p /nix/var/nix/profiles/sproxy-defnix \
     $(upcast build-remote -t hydra.zalora.com -A sproxy sproxy.nix)
 % ssh -F test/ssh_config /nix/var/nix/profiles/sproxy-defnix/bin/supervisord
+```
+
+### IPSEC service
+
+```console
+% env NIX_PATH=$PWD/nix-path nix-build ipsec/
+% upcast install -t target -f hydra -p /nix/var/nix/profiles/ipsec /nix/store/xxx-ipsec
 ```
 
 ### Acknowledgements
