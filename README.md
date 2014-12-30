@@ -24,7 +24,7 @@ Hacks to make nix module system-based services (and beyond) runnable on non-NixO
 % ssh -F test/ssh_config /nix/var/nix/profiles/sproxy-defnix/bin/supervisord
 ```
 
-### IPSEC service
+### IPsec service
 
 ```console
 % env NIX_PATH=$PWD/nix-path nix-build ipsec/
