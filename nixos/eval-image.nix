@@ -1,17 +1,21 @@
-{ exprs }:
+{ configuration
+, system ? "x86_64-linux"
+}:
 
 let
-  lib = import <nixpkgs/lib>;
+  eval-config = import <nixpkgs/nixos/lib/eval-config.nix>;
+  baseModules = [ ./nixos.nix ];
 
-  eval = lib.evalModules {
-    modules = [ ./nixos.nix rec {
-      _file = ./eval-image.nix;
-      key = _file;
-      config.__internal = {
-        check = false;
-        args.pkgs = import <nixpkgs> { system = "x86_64-linux"; };
-      };
-    } ] ++ (if lib.isList exprs then exprs else [ exprs ]);
+  eval = eval-config {
+    check = false;
+    inherit system baseModules;
+    modules = [ configuration ];
   };
-in eval.config // { inherit eval; inherit __nixPath; }
 
+  inherit (eval) pkgs;
+in
+{
+  inherit (eval) config options;
+
+  system = eval.config.system.build.toplevel;
+}
