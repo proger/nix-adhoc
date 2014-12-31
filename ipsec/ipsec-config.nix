@@ -1,15 +1,23 @@
-{ lib, config, ... }:
-let
-  pkgs-native = import <nixpkgs> {};
-  defnix = <defnix>;
-in
+{ lib, config, pkgs, ... }:
 {
   imports = [
-    ./ipsec-wrapper.nix
+    <nixpkgs/nixos/modules/services/networking/strongswan.nix>
   ];
   config = {
     nix-adhoc.name = "ipsec";
-    defnixos.ca = ./ca.crt;
-    defnixos.cert-archive = "/etc/x509/strongswan.p12";
+
+    systemd.services.strongswan = {
+      description = "strongSwan IPSec Service";
+      wantedBy = [ "multi-user.target" ];
+      path = with pkgs; [ kmod iproute iptables utillinux ]; # XXX Linux
+      wants = [ "keys.target" ];
+      after = [ "network.target" "keys.target" ];
+      environment = {
+        STRONGSWAN_CONF = "/dev/null";
+      };
+      serviceConfig = {
+        ExecStart  = "${pkgs.strongswan}/sbin/ipsec start --nofork";
+      };
+    };
   };
 }
