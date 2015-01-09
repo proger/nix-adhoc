@@ -13,7 +13,8 @@ require_util() {
 
 oops() {
     echo "$0: $@" >&2
-    rm -rf "$unpack"
+    #rm -rf "$unpack" # XXX: to speed up subsequent install attempts
+    echo leftovers: $unpack >&2
     exit 1
 }
 
@@ -28,24 +29,28 @@ require_util tar "unpack the binary tarball"
 echo "unpacking Nix binary tarball for $system from \`$url'..."
 if [ ! -d $unpack ]; then
     mkdir "$unpack" || oops "failed to create \`$unpack' directory"
-    curl -C - -O -L "$url" || oops "could not download \`$url'"
+    curl -O -L "$url" || oops "could not download \`$url'"
     tar xjf $(basename "$url") -C "$unpack" || oops "failed to unpack \`$url'"
 fi
 
 [ -e "$unpack"/*/install ] ||
     oops "installation script is missing from the binary tarball!"
 
-install -d /etc/nix
+sudo install -d /etc/nix
 cat > /etc/nix/nix.conf << EOF
 build-users-group =
 EOF
 
-install -m 755 -o root -d /nix
+sudo install -m 755 -o $USER -d /nix
 "$unpack"/*/install
 if [ $? -eq 0 ]; then
     rm -rf "$unpack"
-    echo 'export PATH=/nix/var/nix/profiles/default/bin:$PATH' > /etc/profile.d/nix-adhoc.sh
-    chmod +x /etc/profile.d/nix-adhoc.sh
+
+    echo patching your default environment...
+    echo 'export PATH=/nix/var/nix/profiles/default/bin:$PATH' | sudo tee /etc/profile.d/nix-adhoc.sh
+    # ubuntu needs /etc/environment (see sshd pam policies):
+    echo PATH="/nix/var/nix/profiles/default/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" | sudo tee /etc/environment
+    sudo chmod +x /etc/profile.d/nix-adhoc.sh
 fi
 
 } # End of wrapping
