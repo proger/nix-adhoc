@@ -5,14 +5,13 @@ Hacks to make nix module system-based services (and beyond) runnable on non-NixO
 * nixos module system-based stuff is in `nixos/`
 * totally standalone stuff is in `./` (start at `sproxy.nix`)
 
-### Bootstrapping
+### Warning
 
-#### CentOS
+Stuff in this repo is experimental. Code that survived natural selection evolves to [upcast](https://github.com/zalora/upcast).
 
-```console
-% upcast infra test/infra.nix > test/ssh_config
-% cat nix-install | ssh -F test/ssh_config centos bash -
-```
+### Bootstrapping Nix on 3rd party linux systems.
+
+Now part of `upcast`.
 
 ### Pushing the service to a system
 
